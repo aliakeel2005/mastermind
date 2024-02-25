@@ -9,18 +9,30 @@
 # compare the array to @code, if matching, end game
 # also put that guess in the player_guesses array
 # use player_guesses array to display on board later
+# issue: display_board too big, make it display one row per turn
+# DsplayBoard is now a module
+# simply adds the player string into the string and displays it
+#
 module RandomColors
   def generate_color
-    colors = {1 => 'red', 2 => 'blue', 3 => 'yellow', 4 => 'green', 5 => 'brown', 6 => 'purple'}
+    colors = { 1 => 'red', 2 => 'blue', 3 => 'yellow', 4 => 'green', 5 => 'brown', 6 => 'purple' }
     colors[rand(1..6)]
   end
 end
 
+module DisplayBoard
+  def display_board(player)
+    puts "|| |#{player}| \n"
+  end
+end
+
 class Player
+  include DisplayBoard
   def game_begin
     player_guesses = []
     (1..12).each do |a|
       string = gets.chomp # "yellow, red, blue"
+      display_board(string)
       player_guess = string.split # ["yellow", "red", "blue"]
       player_guesses[a] = string # ["yellow, red, blue"]
       break if player_guess == @code
@@ -38,26 +50,14 @@ class Board < Player
   end
 
   def show_code
-    puts @code
+    puts @code # debug method
   end
 
-  def display_board
-    puts "|| |EEEE| \n" + 
-         "|| |EEEE| \n" +
-         "|| |EEEE| \n" +
-         "|| |EEEE| \n" +
-         "|| |EEEE| \n" +
-         "|| |EEEE| \n" +
-         "|| |EEEE| \n" +
-         "|| |EEEE| \n" +
-         "|| |EEEE| \n" +
-         "|| |EEEE| \n" +
-         "|| |EEEE| \n" +
-         "|| |EEEE| \n" 
-  end
+  # def display_board
+  #   puts "|| || \n"
+  # end
 end
-
 board = Board.new
-board.display_board
+# board.display_board
 board.show_code
 board.game_begin
