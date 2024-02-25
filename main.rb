@@ -12,7 +12,7 @@
 # issue: display_board too big, make it display one row per turn
 # DsplayBoard is now a module
 # simply adds the player string into the string and displays it
-#
+# if player
 module RandomColors
   def generate_color
     colors = { 1 => 'red', 2 => 'blue', 3 => 'yellow', 4 => 'green', 5 => 'brown', 6 => 'purple' }
@@ -21,21 +21,29 @@ module RandomColors
 end
 
 module DisplayBoard
-  def display_board(player)
-    puts "|| |#{player}| \n"
+  def display_board(player, pegs)
+    puts "|#{p pegs}| |#{player}| \n"
   end
 end
 
 class Player
   include DisplayBoard
   def game_begin
+    pegs = ''
     player_guesses = []
     (1..12).each do |a|
       string = gets.chomp # "yellow, red, blue"
-      display_board(string)
-      player_guess = string.split # ["yellow", "red", "blue"]
-      player_guesses[a] = string # ["yellow, red, blue"]
+      player_guess = string.split # ["yellow", "red", "blue"] [purple, blue, green]
+      @code.each_with_index do |color, index|
+        if color == player_guess[index]
+          pegs += "# "
+        elsif player_guess.include?(color)
+          pegs += "* "
+        else
       break if player_guess == @code
+        end
+      end
+      display_board(string,pegs)
     end
   end
 end
