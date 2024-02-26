@@ -22,18 +22,18 @@ end
 
 module DisplayBoard
   def display_board(player, pegs)
-    puts "|#{pegs}| |#{player}|"
+    puts "|#{pegs.shuffle.join}| |#{player}|"
   end
 end
 
 module Pegs
   def add_pegs(string, player_guess)
-    pegs = ''
+    pegs = []
     @code.each_with_index do |color, index|
       if color == player_guess[index]
-        pegs += '#'
+        pegs << '#'
       elsif player_guess.include?(color)
-        pegs += '*'
+        pegs << '*'
       end
     end
     display_board(string, pegs)
