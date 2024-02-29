@@ -25,32 +25,21 @@ module Pegs
   end
 end
 
+class ColorMapping
+  @color_mapping = { 'red' => 1,
+                     'blue' => 2,
+                     'yellow' => 3,
+                     'green' => 4,
+                     'brown' => 5,
+                     'purple' => 6 }
+end
+
+
 module CodeMaker
   include RandomColors
   include DisplayBoard
-  def code_maker
-    pegs = []
-    @player_code = gets.chomp
-    past_guess = []
-    (1..12).each do
-      computer_guess = [generate_color, generate_color, generate_color, generate_color]
-      if !pegs.empty? 
-        past_guess.shuffle!
-        (0..pegs.length).each do |a|
-          computer_guess[a] = past_guess[a] 
-        end
-      end
-      past_guess = computer_guess
-      display_board(computer_guess, pegs)
-      if computer_guess == @player_code
-        break
-      else
-        puts 'any hints?'
-        pegs = []
-        pegs << gets.chomp
-      end
-    end
-  end
+  possible_guesses = (1..6).to_a.repeated_permutation(4).to_a
+  
 end
 
 
