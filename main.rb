@@ -25,21 +25,31 @@ module Pegs
   end
 end
 
-class ColorMapping
-  @color_mapping = { 'red' => 1,
+module ColorMapping
+  def create_map
+   @color_mapping = { 'red' => 1,
                      'blue' => 2,
                      'yellow' => 3,
                      'green' => 4,
                      'brown' => 5,
                      'purple' => 6 }
+  end
 end
 
 
-module CodeMaker
+class CodeMaker
   include RandomColors
   include DisplayBoard
+  include ColorMapping
+  def initialize
+    create_map
+  end
   possible_guesses = (1..6).to_a.repeated_permutation(4).to_a
-  
+  def start_game
+    puts 'make your code for the computer to guess!'
+    string = gets.chomp.split
+     puts mapped_code = string.map { |colors| @color_mapping[colors]}
+  end
 end
 
 
@@ -59,7 +69,7 @@ end
 
 class Board < CodeBreaker
   include RandomColors
-  include CodeMaker
+  # include CodeMaker
 
   def initialize
     super
@@ -67,6 +77,8 @@ class Board < CodeBreaker
   end
 end
 board = Board.new
+test = CodeMaker.new
+test.start_game
 puts '1- code breaker 2- code maker'
 if gets.chomp == '1'
   board.game_begin
