@@ -1,3 +1,6 @@
+# make computer_guess variable # add each guess of @first_guesses to it
+# add
+
 module RandomColors
   def generate_color
     colors = %w[red blue yellow green brown purple]
@@ -43,12 +46,31 @@ class CodeMaker
   include ColorMapping
   def initialize
     create_map
+    @pegs = []
+    @first_guesses = [[1,1,1,1],[2,2,2,2],[3,3,3,3],[4,4,4,4],[5,5,5,5],[6,6,6,6]]
   end
+
   possible_guesses = (1..6).to_a.repeated_permutation(4).to_a
+
+  def guess_the_code(mapped_code)
+    (1..12).each do
+      computer_guess = @first_guesses.map do |guess|
+        if (guess & mapped_code).any?
+          @pegs.push(1)
+        elsif @pegs.length >= 4
+          puts "end"
+          puts @pegs.length
+          return
+        end
+      end
+    end
+  end
+
   def start_game
     puts 'make your code for the computer to guess!'
     string = gets.chomp.split
-     puts mapped_code = string.map { |colors| @color_mapping[colors]}
+    mapped_code = string.map { |colors| @color_mapping[colors] } # use mapped_code for swazeki algorithm
+    guess_the_code(mapped_code)
   end
 end
 
@@ -79,9 +101,9 @@ end
 board = Board.new
 test = CodeMaker.new
 test.start_game
-puts '1- code breaker 2- code maker'
-if gets.chomp == '1'
-  board.game_begin
-else
-  board.code_maker
-end
+# puts '1- code breaker 2- code maker'
+# if gets.chomp == '1'
+#   board.game_begin
+# else
+#   board.code_maker
+# end
