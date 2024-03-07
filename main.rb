@@ -46,21 +46,26 @@ class CodeMaker
   include ColorMapping
   def initialize
     create_map
-    @pegs = []
+    @pegs = 0
     @first_guesses = [[1,1,1,1],[2,2,2,2],[3,3,3,3],[4,4,4,4],[5,5,5,5],[6,6,6,6]]
   end
 
   possible_guesses = (1..6).to_a.repeated_permutation(4).to_a
 
   def guess_the_code(mapped_code)
-    (1..12).each do
-      computer_guess = @first_guesses.map do |guess|
-        if (guess & mapped_code).any?
-          @pegs.push(1)
-        elsif @pegs.length >= 4
+    turns = 12
+    while turns >= 0 do
+      break if turns.zero? || @pegs == 4
+
+      @first_guesses.map do |guess| # current issue: map method DOES NOT factor in how many turns pass
+        turns -= 1
+        puts guess
+        puts "current guess: #{guess}, current turn: #{turns}"
+        @pegs = mapped_code.count {|element| guess.include?(element)}
+        if @pegs == 4
           puts "end"
-          puts @pegs.length
-          return
+          p @pegs
+          break
         end
       end
     end
