@@ -47,21 +47,27 @@ class CodeMaker
   def initialize
     create_map
     @pegs = 0
+    @current_pegs = 0
     @first_guesses = [[1,1,1,1],[2,2,2,2],[3,3,3,3],[4,4,4,4],[5,5,5,5],[6,6,6,6]]
   end
 
   possible_guesses = (1..6).to_a.repeated_permutation(4).to_a
+
+  def remove_guesses(mapped_code, guess)
+    @current_pegs = mapped_code.count { |element| guess.include?(element) }
+    possible_guesses = possible_guesses.select { |array| array.count(guess[1]) >= @current_pegs }
+  end
 
   def guess_the_code(mapped_code)
     turns = 12
     while turns >= 0 do
       break if turns.zero? || @pegs == 4
 
-      @first_guesses.map do |guess| # current issue: map method DOES NOT factor in how many turns pass
+      @first_guesses.map do |guess| # current issue: remove however many pegs you get from the current guess from possible_guesses
         turns -= 1
-        puts guess
         puts "current guess: #{guess}, current turn: #{turns}"
-        @pegs = mapped_code.count {|element| guess.include?(element)}
+        remove_guesses(mapped_code, guess)
+        @pegs += mapped_code.count { |element| guess.include?(element) } # maybe make it a module
         if @pegs == 4
           puts "end"
           p @pegs
