@@ -59,13 +59,18 @@ class CodeMaker
   end
 
   def random_guesses(turns, mapped_code)
-    while turns >= 0
+    game_on = true
+    while turns >= 0 && game_on
       break if turns.zero?
 
-      @possible_guesses.each do |a| 
+      @possible_guesses.each do |a|
+        turns -= 1
+        if a == mapped_code
+          puts "the computer guesses your code correctly on turn #{turns}! #{a}"
+          game_on = false
+        end
         break if turns.zero? || a == mapped_code
 
-        turns -= 1
         puts "turn:#{turns}, the computer tries to guess! #{a}"
       end
     end
