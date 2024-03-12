@@ -49,18 +49,31 @@ class CodeMaker
     @pegs = 0
     @current_pegs = 0
     @first_guesses = [[1,1,1,1],[2,2,2,2],[3,3,3,3],[4,4,4,4],[5,5,5,5],[6,6,6,6]]
+    @possible_guesses = (1..6).to_a.repeated_permutation(4).to_a
   end
-
-  possible_guesses = (1..6).to_a.repeated_permutation(4).to_a
 
   def remove_guesses(mapped_code, guess)
     @current_pegs = mapped_code.count { |element| guess.include?(element) }
-    possible_guesses = possible_guesses.select { |array| array.count(guess[1]) >= @current_pegs }
+    @possible_guesses = @possible_guesses.select { |array| array.count(guess[1]) >= @current_pegs }
+    @possible_guesses
+  end
+
+  def random_guesses(turns, mapped_code)
+    while turns >= 0
+      break if turns.zero?
+
+      @possible_guesses.each do |a| 
+        break if turns.zero? || a == mapped_code
+
+        turns -= 1
+        puts "turn:#{turns}, the computer tries to guess! #{a}"
+      end
+    end
   end
 
   def guess_the_code(mapped_code)
     turns = 12
-    while turns >= 0 do
+    while turns >= 0
       break if turns.zero? || @pegs == 4
 
       @first_guesses.map do |guess| # current issue: remove however many pegs you get from the current guess from possible_guesses
@@ -75,6 +88,7 @@ class CodeMaker
         end
       end
     end
+    random_guesses(turns, mapped_code)
   end
 
   def start_game
