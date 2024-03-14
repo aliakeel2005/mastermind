@@ -92,8 +92,19 @@ class CodeMaker
   end
 
   def start_game
-    puts 'make your code for the computer to guess!'
+    puts 'Make your code for the computer to guess!'
     string = gets.chomp.split
+    unless string.length == 4
+      puts 'You must use exactly 4 colors!'
+      return
+    end
+    
+    string.each do |color|
+      unless COLORS.include?(color)
+        puts "#{color} is not a valid color"
+        return
+      end
+    end
     mapped_code = string.map { |colors| @color_mapping[colors] }
     guess_the_code(mapped_code)
   end
@@ -108,12 +119,16 @@ class CodeBreaker
     @code = [generate_color, generate_color, generate_color, generate_color]
   end
   def game_begin
-    puts 'type your 4 color guess'
+    puts 'Type your 4 color guess'
     (1..12).each do |a|
       puts "turn: #{a}"
       string = gets.chomp
       player_guess = string.split
       invalid_color = false
+      unless player_guess.length == 4 
+        puts 'You must use exactly 4 colors!'
+        invalid_color = true
+      end
       player_guess.each do |color|
         unless COLORS.include?(color)
           puts "#{color} is not a valid color"
@@ -125,12 +140,13 @@ class CodeBreaker
       add_pegs(string, player_guess)
       break if player_guess == @code
     end
-    puts "the code was #{@code}"
+    puts "The code was #{@code}"
   end
 end
+
 code_breaker = CodeBreaker.new
 code_maker = CodeMaker.new
-puts '1- code breaker 2- code maker'
+puts '1- Code breaker 2- Code maker'
 user_choice = gets.chomp
 if user_choice == '1'
   code_breaker.game_begin
