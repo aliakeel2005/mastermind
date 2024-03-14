@@ -1,6 +1,3 @@
-# make computer_guess variable # add each guess of @first_guesses to it
-# add
-
 module RandomColors
   def generate_color
     colors = %w[red blue yellow green brown purple]
@@ -30,19 +27,18 @@ end
 
 module ColorMapping
   def create_map
-   @color_mapping = { 'red' => 1,
-                     'blue' => 2,
-                     'yellow' => 3,
-                     'green' => 4,
-                     'brown' => 5,
-                     'purple' => 6 }
+    @color_mapping = { 'red' => 1,
+                       'blue' => 2,
+                       'yellow' => 3,
+                       'green' => 4,
+                       'brown' => 5,
+                       'purple' => 6 }
   end
 
   def unmap(guess, mapped_code)
-    unmapped = guess.map {|a| mapped_code.key(a)}
+    guess.map { |a| mapped_code.key(a) }
   end
 end
-
 
 class CodeMaker
   include RandomColors
@@ -52,7 +48,7 @@ class CodeMaker
     create_map
     @pegs = 0
     @current_pegs = 0
-    @first_guesses = [[1,1,1,1],[2,2,2,2],[3,3,3,3],[4,4,4,4],[5,5,5,5],[6,6,6,6]]
+    @first_guesses = [[1, 1, 1, 1], [2, 2, 2, 2], [3, 3, 3, 3], [4, 4, 4, 4], [5, 5, 5, 5], [6, 6, 6, 6]]
     @possible_guesses = (1..6).to_a.repeated_permutation(4).to_a
   end
 
@@ -74,7 +70,7 @@ class CodeMaker
         end
         break if turns.zero? || a == mapped_code
 
-        puts "turn:#{turns}, the computer tries to guess! #{a}"
+        puts "turn:#{turns}, the computer tries to guess! #{unmap(a, @color_mapping)}"
       end
     end
   end
@@ -86,7 +82,7 @@ class CodeMaker
 
       @first_guesses.map do |guess|
         turns -= 1
-        puts "current guess: #{unmap(guess,@color_mapping)}, current turn: #{turns}"
+        puts "turn:#{turns}, the computer tries to guess! #{unmap(guess, @color_mapping)}"
         remove_guesses(mapped_code, guess)
         @pegs += mapped_code.count { |element| guess.include?(element) } # maybe make it a module
         break if @pegs == 4
@@ -98,15 +94,18 @@ class CodeMaker
   def start_game
     puts 'make your code for the computer to guess!'
     string = gets.chomp.split
-    mapped_code = string.map { |colors| @color_mapping[colors] } # use mapped_code for swazeki algorithm
+    mapped_code = string.map { |colors| @color_mapping[colors] }
     guess_the_code(mapped_code)
   end
 end
 
-
 class CodeBreaker
   include DisplayBoard
   include Pegs
+  include RandomColors
+  def initialize
+    @code = [generate_color, generate_color, generate_color, generate_color]
+  end
   def game_begin
     (1..12).each do
       string = gets.chomp
@@ -117,22 +116,11 @@ class CodeBreaker
     puts "the code was #{@code}"
   end
 end
-
-class Board < CodeBreaker
-  include RandomColors
-  # include CodeMaker
-
-  def initialize
-    super
-    @code = [generate_color, generate_color, generate_color, generate_color]
-  end
+code_breaker = CodeBreaker.new
+code_maker = CodeMaker.new
+puts '1- code breaker 2- code maker'
+if gets.chomp == '1'
+  code_breaker.game_begin
+else
+  code_maker.start_game
 end
-board = Board.new
-test = CodeMaker.new
-test.start_game
-# puts '1- code breaker 2- code maker'
-# if gets.chomp == '1'
-#   board.game_begin
-# else
-#   board.code_maker
-# end
