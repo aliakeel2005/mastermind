@@ -1,7 +1,7 @@
 module RandomColors
+  COLORS = %w[red blue yellow green brown purple]
   def generate_color
-    colors = %w[red blue yellow green brown purple]
-    colors[rand(0..5)]
+    COLORS[rand(0..5)]
   end
 end
 
@@ -104,12 +104,24 @@ class CodeBreaker
   include Pegs
   include RandomColors
   def initialize
+    generate_color
     @code = [generate_color, generate_color, generate_color, generate_color]
   end
   def game_begin
-    (1..12).each do
+    puts 'type your 4 color guess'
+    (1..12).each do |a|
+      puts "turn: #{a}"
       string = gets.chomp
       player_guess = string.split
+      invalid_color = false
+      player_guess.each do |color|
+        unless COLORS.include?(color)
+          puts "#{color} is not a valid color"
+          invalid_color = true
+          break
+        end
+      end
+      redo if invalid_color == true
       add_pegs(string, player_guess)
       break if player_guess == @code
     end
@@ -119,8 +131,11 @@ end
 code_breaker = CodeBreaker.new
 code_maker = CodeMaker.new
 puts '1- code breaker 2- code maker'
-if gets.chomp == '1'
+user_choice = gets.chomp
+if user_choice == '1'
   code_breaker.game_begin
-else
+elsif user_choice == '2'
   code_maker.start_game
+else
+  puts 'wrong command!'
 end
