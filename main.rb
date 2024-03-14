@@ -37,6 +37,10 @@ module ColorMapping
                      'brown' => 5,
                      'purple' => 6 }
   end
+
+  def unmap(guess, mapped_code)
+    unmapped = guess.map {|a| mapped_code.key(a)}
+  end
 end
 
 
@@ -55,7 +59,6 @@ class CodeMaker
   def remove_guesses(mapped_code, guess)
     @current_pegs = mapped_code.count { |element| guess.include?(element) }
     @possible_guesses = @possible_guesses.select { |array| array.count(guess[1]) >= @current_pegs }
-    @possible_guesses
   end
 
   def random_guesses(turns, mapped_code)
@@ -66,7 +69,7 @@ class CodeMaker
       @possible_guesses.each do |a|
         turns -= 1
         if a == mapped_code
-          puts "the computer guesses your code correctly on turn #{turns}! #{a}"
+          puts "the computer guesses your code correctly on turn #{turns}! #{unmap(a, @color_mapping)}"
           game_on = false
         end
         break if turns.zero? || a == mapped_code
@@ -81,16 +84,12 @@ class CodeMaker
     while turns >= 0
       break if turns.zero? || @pegs == 4
 
-      @first_guesses.map do |guess| # current issue: remove however many pegs you get from the current guess from possible_guesses
+      @first_guesses.map do |guess|
         turns -= 1
-        puts "current guess: #{guess}, current turn: #{turns}"
+        puts "current guess: #{unmap(guess,@color_mapping)}, current turn: #{turns}"
         remove_guesses(mapped_code, guess)
         @pegs += mapped_code.count { |element| guess.include?(element) } # maybe make it a module
-        if @pegs == 4
-          puts "end"
-          p @pegs
-          break
-        end
+        break if @pegs == 4
       end
     end
     random_guesses(turns, mapped_code)
